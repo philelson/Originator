@@ -8,16 +8,8 @@ Magento that's not in the original module destination.
 
 ## Originator solution
 
-### Using Magento config
-Every module in Magento needs a module definition file within the app/etc/modules file. These files are loaded by
-Magento in a specific order, Mage_All.xml, Mage_*.xml and the everything else.
-
-The module definition files specify the modules code pool, the modules it depends on and if it's active, it also specifies
-in the tab name the module name space and module name. From this we and Magento can extrapolate where this modules code
-will be found.
-
 ### Single code copy
-Chances are if you're a developer you want yo checkout your modules into a single location and use them across multiple
+Chances are if you're a developer you want to checkout your modules into a single location and use them across multiple
 Magento projects. We suggest an absolute or relative path that will be consistent across environments.
 
 ### Use GIT

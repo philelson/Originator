@@ -29,10 +29,9 @@ Modules themselves don't need any configuration, it is the application that need
 the relative paths to the required modules. When 'originator run' is executed it will merge the modules from those paths
 into the magento_root (default public). During this execution the '.originator_file_cache' file will be updated with any new
 files / directories. Originator will also update the modules '.originator_projects' file which contains absolute paths
-to the current projects which use this module. This allows developers to call 'originator' from the module directory which
-will tell the application which modules need a re-merge (Adds name to '.originator_module_status') or force a re-merge
-on all projects which use that module.
-
+to the current projects which use this module. This allows developers to call 'originator -module-update' from the module directory which
+will tell the application which modules need a re-merge (Adds name to '.originator_module_status') or call
+'originator -module-force-merge' to force a re-merge on all projects which use that module.
 
 ## Terminology
 

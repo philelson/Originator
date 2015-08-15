@@ -1,0 +1,18 @@
+default:
+  extensions:
+    MageTest\MagentoExtension\Extension:
+    Behat\MinkExtension\Extension:
+      base_url: "http://originator.dev"
+      selenium2: ~
+      default_session: "selenium2"
+      browser_name: phantomjs
+      selenium2:
+              wd_host: http://127.0.0.1:4444/wd/hub
+              capabilities:
+                version: ''
+      goutte:
+        guzzle_parameters:
+          curl.options:
+            CURLOPT_SSL_VERIFYPEER: false
+            CURLOPT_CERTINFO: false
+            CURLOPT_TIMEOUT: 120

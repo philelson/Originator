@@ -1,0 +1,5 @@
+
+magento_root: public
+module_paths:
+  example_module_1 : "example_modules/module_one"
+  example_module_2 : "example_modules/module_two"

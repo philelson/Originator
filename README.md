@@ -1,2 +1,67 @@
 # originator
 This will hopefully be a package to help manage Magento modules across projects
+
+# Logic behind the design.
+Before 'originator' we used to rsync our modules into the code pool, the main issue is if you delete a file in the
+module, it stays in the destination. The --delete flag doesn't work because it tries to delete every file inside
+Magento that's not in the original module destination.
+
+## Originator solution
+
+### Using Magento config
+Every module in Magento needs a module definition file within the app/etc/modules file. These files are loaded by
+Magento in a specific order, Mage_All.xml, Mage_*.xml and the everything else.
+
+The module definition files specify the modules code pool, the modules it depends on and if it's active, it also specifies
+in the tab name the module name space and module name. From this we and Magento can extrapolate where this modules code
+will be found.
+
+### Single code copy
+Chances are if you're a developer you want yo checkout your modules into a single location and use them across multiple
+Magento projects. We suggest an absolute or relative path that will be consistent across environments.
+
+### Use GIT
+When originator iterates over your projects originator.json file it will check if the module exists, if it doesn't
+you'll be prompted about it and the program will exist.
+
+If the module does exist, you can configure originator to pull the code from the branch.
+
+### --delete correction
+Fixing the --delete correction requires a cache of all files within the module from start to finish. To make it
+environment agnostic this will be stores in a simple file, rather than a database. This will be done
+in the modules '.originator_file_cache' which will simple list relative paths from the module root to all files.
+If they no longer exists in the module but exist in the destination, then they are removed from the destination.
+
+### Module configuration
+Modules themselves don't need any configuration, it is the application that needs configuration. The originator.yml specifies
+the relative paths to the required modules. When 'originator run' is executed it will merge the modules from those paths
+into the magento_root (default public). During this execution the '.originator_file_cache' file will be updated with any new
+files / directories. Originator will also update the modules '.originator_projects' file which contains absolute paths
+to the current projects which use this module. This allows developers to call 'originator' from the module directory which
+will tell the application which modules need a re-merge (Adds name to '.originator_module_status') or force a re-merge
+on all projects which use that module.
+
+
+## Terminology
+
+1. Application|Magento - this is the Magento application
+2. Module - is a Magento module to be merged into the application, this is generally stored externally to the
+application and merged in
+
+## Committing
+
+### Application
+
+* Commit the 'originator.yml' file.
+* Commit any new source files after originator has run into the magento_root directory as you would.
+* Don't commit the '.originator_module_status' file.
+
+### Modules
+
+* Commit the '.originator_file_cache' file as this is the primary module history file and if deleted can then be reinstated
+from VC.
+* Don't commit the '.originator_projects', this is a platform specific project location file.
+
+
+
+

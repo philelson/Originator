@@ -27,13 +27,23 @@
  * PHP version 5.3+
  *
  * @category Pegasus_Tools
- * @package  Pegasus_originator
+ * @package  Pegasus_Originator
  * @author   Philip Elson <phil@pegasus-commerce.com>
  * @license  MIT http://opensource.org/licenses/MIT
  * @link     http://pegasus-commerce.com
  */
 namespace Pegasus\Application\Originator\Exceptions;
 
-class ValueNotFoundException extends \Exception {
+/**
+ * Exception for invalid data
+ *
+ * @category Pegasus_Tools
+ * @package  Pegasus_Originator
+ * @author   Philip Elson <phil@pegasus-commerce.com>
+ * @license  MIT http://opensource.org/licenses/MIT
+ * @link     http://pegasus-commerce.com
+ */
+class ValueNotFoundException extends \Exception
+{
 
 }

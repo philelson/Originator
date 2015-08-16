@@ -1,5 +1,12 @@
-
 magento_root: public
-module_paths:
-  example_module_1 : "example_modules/module_one"
-  example_module_2 : "example_modules/module_two"
+modules:
+  unique_module_identifier_1 :
+    path          : "example_modules/module_one"
+    name          : "Example module 1"
+    description   : "Some short description"
+    enabled       : yes
+  unique_module_identifier_2 :
+      path          : "example_modules/module_two"
+      name          : "Example module 2"
+      description   : "Some short description"
+      enabled       : yes

@@ -52,8 +52,8 @@ use Monolog\Handler\StreamHandler;
 /**
  * This class provides the core methods for VagrantTransient
  *
- * @category Pegasus_Utilities
- * @package  Originator
+ * @category Pegasus_Tools
+ * @package  Pegasus_Originator
  * @author   Philip Elson <phil@pegasus-commerce.com>
  * @license  MIT http://opensource.org/licenses/MIT
  * @link     http://pegasus-commerce.com
@@ -80,9 +80,14 @@ class Originator extends Command
      *
      * @var null
      */
-    private $config = null;
+    private $_config = null;
 
-    private $dispatcher = null;
+    /**
+     * Class scope dispatcher object
+     *
+     * @var null
+     */
+    private $_dispatcher = null;
 
     /**
      * Configures the application
@@ -94,13 +99,13 @@ class Originator extends Command
         $this
             ->setName("originator")
             ->setDescription("Simple Magento module synchronisation");
-//            ->addOption(
-//                'storage',
-//                null,
-//                InputOption::VALUE_OPTIONAL,
-//                'Environment Location Storage',
-//                $this->getDefaultFileName()
-//            );
+        //            ->addOption(
+        //                'storage',
+        //                null,
+        //                InputOption::VALUE_OPTIONAL,
+        //                'Environment Location Storage',
+        //                $this->getDefaultFileName()
+        //            );
     }
 
     /**
@@ -116,30 +121,35 @@ class Originator extends Command
     /**
      * This method dispatches an event
      *
-     * @param $name Is the name of the event being dispatched
-     * @param array $data  Additional data - this class is always added as originator.
-     * @param Event|null $event
+     * @param string                        $name            Event name
+     * @param Event|null                    $event           Event object
+     * @param array                         $data            Additional data
      * @param EventDispatcherInterface|null $eventDispatcher for dependancy injection
+     *
+     * @return $this
      */
-    private function _dispatchEvent($name, Event $event=null, $data=array(), EventDispatcherInterface $eventDispatcher=null) {
+    private function _dispatchEvent($name, Event $event=null, $data=array(),
+        EventDispatcherInterface $eventDispatcher=null
+    ) {
         /* Initialise the class dispatcher if one doesn't exist */
-        if(null == $this->dispatcher) {
-            $this->dispatcher = new EventDispatcher();
+        if (null == $this->_dispatcher) {
+            $this->_dispatcher = new EventDispatcher();
         }
         /* Use the class dispatcher if the parameter dispatcher is null */
-        if(null == $eventDispatcher) {
-            $eventDispatcher = $this->dispatcher;
+        if (null == $eventDispatcher) {
+            $eventDispatcher = $this->_dispatcher;
         }
         /* Add the originator object to the event data by default */
-        if(false == array_key_exists('originator', $data)) {
+        if (false == array_key_exists('originator', $data)) {
             $data['originator'] = $this;
         }
         /* Create the event if the parameter event is null */
-        if(null == $event) {
+        if (null == $event) {
             $event = new BasicEvent($data);
         }
         /* dispatch the event */
         $eventDispatcher->dispatch($name, $event);
+        return $this;
     }
 
     /**
@@ -148,7 +158,7 @@ class Originator extends Command
      * @param InputInterface  $input  input interface for  command
      * @param OutputInterface $output output interface for command
      * 
-     * @return void
+     * @return $this
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -158,49 +168,105 @@ class Originator extends Command
         $this->parse($input, $output);
         $this->afterParse($input, $output);
         $this->cleanup($input, $output);
+        return $this;
     }
 
-    protected function initialise(InputInterface $input, OutputInterface $output) {
+    /**
+     * This method initialises the required objects and services.
+     *
+     * @param InputInterface  $input  Application terminal input
+     * @param OutputInterface $output Application terminal output
+     *
+     * @return $this
+     *
+     * @throws Config\InvalidConfigurationException
+     */
+    protected function initialise(InputInterface $input, OutputInterface $output) 
+    {
         $this->_dispatchEvent('originator.initialise.before');
-        $this->config = new OriginatorConfig();
-        $this->config->setEventDispatched($this->dispatcher);
-        $this->config->load();
-        $this->_setupMagentoRoot();
+        $this->_config = new OriginatorConfig();
+        $this->_config->setEventDispatched($this->_dispatcher);
+        $this->_config->load();
         $this->_dispatchEvent('originator.initialise.after');
+        return $this;
     }
 
-    protected function beforeParse(InputInterface $input, OutputInterface $output) {
+    /**
+     * This method is called before the parse.
+     * Calls events originator.beforeParse.before and
+     * originator.beforeParse.after
+     *
+     * @param InputInterface  $input  Application terminal input
+     * @param OutputInterface $output Application terminal output
+     *
+     * @return $this
+     */
+    protected function beforeParse(InputInterface $input, OutputInterface $output) 
+    {
         $this->_dispatchEvent('originator.beforeParse.before');
         //Logic
         $this->_dispatchEvent('originator.beforeParse.after');
+        return $this;
     }
 
-    protected function parse(InputInterface $input, OutputInterface $output) {
+    /**
+     * This method parses the modules and merges them into the magento_root.
+     * Calls events originator.parse.before and originator.parse.after
+     *
+     * @param InputInterface  $input  Application terminal input
+     * @param OutputInterface $output Application terminal output
+     *
+     * @return $this
+     */
+    protected function parse(InputInterface $input, OutputInterface $output) 
+    {
         $this->_dispatchEvent('originator.parse.before');
         //Logic
         $this->_dispatchEvent('originator.parse.after');
+        return $this;
     }
 
-    protected function afterParse(InputInterface $input, OutputInterface $output) {
+    /**
+     * This method is called after the parse.
+     * Calls events originator.afterParse.before and
+     * originator.afterParse.after
+     *
+     * @param InputInterface  $input  Application terminal input
+     * @param OutputInterface $output Application terminal output
+     *
+     * @return $this
+     */
+    protected function afterParse(InputInterface $input, OutputInterface $output) 
+    {
         $this->_dispatchEvent('originator.afterParse.before');
         //Logic
         $this->_dispatchEvent('originator.afterParse.after');
+        return $this;
     }
 
-    protected function cleanup(InputInterface $input, OutputInterface $output) {
+    /**
+     * This method is called at the end and is used for cleanup.
+     * Calls events originator.cleanup.before and originator.cleanup.after
+     *
+     * @param InputInterface  $input  Application terminal input
+     * @param OutputInterface $output Application terminal output
+     *
+     * @return $this
+     */
+    protected function cleanup(InputInterface $input, OutputInterface $output) 
+    {
         $this->_dispatchEvent('originator.cleanup.before');
         //Logic
         $this->_dispatchEvent('originator.cleanup.after');
-    }
-
-    private function _setupMagentoRoot() {
-
+        return $this;
     }
 
     /**
      * This method loads the command styles (warning|general|notice|fatal_error)
      *
-     * @return void
+     * @param OutputInterface $output Application terminal output
+     *
+     * @return $this
      */
     public function loadOutputStyles(OutputInterface $output)
     {
@@ -216,6 +282,7 @@ class Originator extends Command
         $output->getFormatter()->setStyle('notice', $style);
         $style      = new OutputFormatterStyle('white', 'red', $styleTwo);
         $output->getFormatter()->setStyle('fatal_error', $style);
+        return $this;
     }
 
     /**
@@ -235,7 +302,7 @@ class Originator extends Command
      * @param string $type    Is the type of message (warning|notice|general)
      * @param bool   $out     Tells the method to print to the terminal or just log
      *
-     * @return void
+     * @return $this
      */
     protected function printLn($message, $type='general', $out=true)
     {
@@ -249,6 +316,7 @@ class Originator extends Command
             }
         }
         $this->getLog()->addInfo($message, array('type' => $type));
+        return $this;
     }
 
     /**

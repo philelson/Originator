@@ -18,7 +18,7 @@ you'll be prompted about it and the program will exist.
 
 If the module does exist, you can configure originator to pull the code from the branch.
 
-### --delete correction
+### Rsync --delete correction
 Fixing the --delete correction requires a cache of all files within the module from start to finish. To make it
 environment agnostic this will be stores in a simple file, rather than a database. This will be done
 in the modules '.originator_file_cache' which will simple list relative paths from the module root to all files.
@@ -52,6 +52,7 @@ application and merged in
 * Commit the '.originator_file_cache' file as this is the primary module history file and if deleted can then be reinstated
 from VC.
 * Don't commit the '.originator_projects', this is a platform specific project location file.
+
 
 
 

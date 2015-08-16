@@ -40,49 +40,124 @@ use Pegasus\Application\Originator\Originator;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Yaml\Parser;
 
-class Yml {
+/**
+ * Class which loads the config
+ *
+ * @category Pegasus_Tools
+ * @package  Pegasus_Originator
+ * @author   Philip Elson <phil@pegasus-commerce.com>
+ * @license  MIT http://opensource.org/licenses/MIT
+ * @link     http://pegasus-commerce.com
+ */
+class Yml
+{
 
-    const EVENT_CONFIG_VALIDATE = 'yml.config.validate.before';
+    const EVENT_CONFIG_VALIDATE_BEFORE  = 'yml.config.validate.before';
 
-    private $config             = null;
+    private $_config                     = null;
 
-    private $requiredNodes      = null;
+    private $_requiredNodes              = null;
 
-    private $dispatcher         = null;
+    private $_dispatcher                 = null;
 
-    public function __construct() {
-        $this->requiredNodes = array('magento_root', 'originator_root', 'originator_module_root');
+    private $_configFileName             = null;
+
+    /**
+     * Constructor method.
+     * This method sets the default required nodes.
+     */
+    public function __construct() 
+    {
+        $this->_requiredNodes = array('magento_root');
     }
 
-    public function setEventDispatched(EventDispatcher $dispatcher) {
-        $this->dispatcher = $dispatcher;
+    /**
+     * This method sets the Yml event dispatcher
+     *
+     * @param EventDispatcher $dispatcher Is the event dispatcher
+     *
+     * @return $this;
+     */
+    public function setEventDispatched(EventDispatcher $dispatcher) 
+    {
+        $this->_dispatcher = $dispatcher;
+        return $this;
     }
 
-    public static function getConfigFileName() {
-        return Originator::CONFIG_FILE;
+    /**
+     * This method sets the config file name, must be set before
+     * load is called.
+     *
+     * @param string $configName Is the name of the config file
+     * 
+     * @return $this
+     */
+    public function setConfigFileName($configName)
+    {
+        $this->_configFileName = $configName;
+        return $this;
     }
 
-    public function addRequiredNodes($nodes) {
+    /**
+     * This method adds required nodes to the config.
+     * Must be called before load.
+     *
+     * @param $nodes Node array to be added
+     *
+     * @return $this
+     */
+    public function addRequiredNodes($nodes) 
+    {
         if(false == is_array($nodes)) {
             throw new InvalidArgumentException('Additional nodes needs to be an array');
         }
-        $this->requiredNodes = array_merge($nodes);
+        $this->_requiredNodes = array_merge($nodes);
+        return $this;
     }
 
-    public function load() {
-        $yaml = new Parser();
-        if(false == file_exists(self::getConfigFileName())) {
+    /**
+     * This method parses the config data
+     *
+     * @param Parser|null $parser Is the parser
+     *
+     * @throws InvalidConfigurationException    If config can not be loaded
+     * @throws \Exception If the config name has not been specified
+     *
+     * @return $this;
+     */
+    public function load(Parser $parser=null) 
+    {
+        if (null == $this->_configFileName) {
+            throw new \Exception("Config file name not set!");
+        }
+        if (null == $parser) {
+            $parser = new Parser();
+        }
+        if (false == file_exists(self::getConfigFileName())) {
             throw new InvalidConfigurationException('Configuration file not found: '.self::getConfigFileName());
         }
-        $this->config = $yaml->parse(file_get_contents(self::getConfigFileName()));
+        $this->_config = $parser->parse(file_get_contents(self::getConfigFileName()));
         $this->_validateConfig();
+        return $this;
     }
 
-    private function _validateConfig() {
-
-        $event = new YmlEvent($this);
-        if(null != $this->dispatcher) {
-            $this->dispatcher->dispatch(self::EVENT_CONFIG_VALIDATE, $event);
+    /**
+     * This method validates the config.
+     * This method dispatches the EVENT_CONFIG_VALIDATE_BEFORE allowing
+     * other parts of the system to validate the config.
+     *
+     * @param Event|null $event Is the event object
+     *
+     * @return $this;
+     */
+    private function _validateConfig(Event $event=null) 
+    {
+        if (null == $event) {
+            $event = new YmlEvent($this);
         }
+        if (null != $this->_dispatcher) {
+            $this->_dispatcher->dispatch(self::EVENT_CONFIG_VALIDATE_BEFORE, $event);
+        }
+        return $this;
     }
 }

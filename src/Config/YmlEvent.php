@@ -37,19 +37,52 @@ namespace Pegasus\Application\Originator\Config;
 
 use Symfony\Component\EventDispatcher\Event;
 
-class YmlEvent extends Event {
-    
+/**
+ * Event for the config
+ *
+ * @category Pegasus_Tools
+ * @package  Pegasus_Originator
+ * @author   Philip Elson <phil@pegasus-commerce.com>
+ * @license  MIT http://opensource.org/licenses/MIT
+ * @link     http://pegasus-commerce.com 
+*/
+class YmlEvent extends Event
+{
+    /**
+     * Class scope config
+     *
+     * @var Yml
+     */
     protected $config;
 
+    /**
+     * Constructor sets the Yml object
+     *
+     * @param Yml $config Is the config object
+     */
     public function __construct(Yml $config)
     {
         $this->config = $config;
     }
 
-    public function setConfig(Yml $config) {
+    /**
+     * Allows overriding of the class scope config object
+     *
+     * @param Yml $config Is the config object
+     *
+     * @return $this
+     */
+    public function setConfig(Yml $config) 
+    {
         $this->config = $config;
+        return $this;
     }
 
+    /**
+     * This method returns the config
+     *
+     * @return Yml
+     */
     public function getConfig()
     {
         return $this->config;

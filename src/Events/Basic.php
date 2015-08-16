@@ -27,7 +27,7 @@
  * PHP version 5.3+
  *
  * @category Pegasus_Tools
- * @package  Pegasus_originator
+ * @package  Pegasus_Originator
  * @author   Philip Elson <phil@pegasus-commerce.com>
  * @license  MIT http://opensource.org/licenses/MIT
  * @link     http://pegasus-commerce.com
@@ -41,18 +41,28 @@ use Pegasus\Application\Originator\Exceptions\ValueNotFoundException;
 /**
  * This basic event class contains get and add methods to an internal array.
  *
- * Class Basic
+ * @category Pegasus_Tools
+ * @package  Pegasus_Originator
+ * @author   Philip Elson <phil@pegasus-commerce.com>
+ * @license  MIT http://opensource.org/licenses/MIT
+ * @link     http://pegasus-commerce.com
  */
 class Basic extends Event
 {
+    /**
+     * Class scope variable for holding event key value pairs
+     *
+     * @var array|null
+     */
     protected $values = array();
 
     /**
      * This method allows for initialising of the data.
      *
-     * @param array|null $data
+     * @param array|null $data used to initialise the event data
      */
-    public function __construct(array $data=null) {
+    public function __construct(array $data=null) 
+    {
         if (null != $data) {
             $this->values = $data;
         }
@@ -63,16 +73,19 @@ class Basic extends Event
      *
      * @return array|null
      */
-    public function getValues() {
+    public function getValues() 
+    {
         return $this->values;
     }
 
     /**
      * This method sets a value identified by the key
      *
-     * @param $key      Is the key used to set and extract the value
-     * @param $value    Is the value to be stored
+     * @param string $key   Is the key used to set and extract the value
+     * @param string $value Is the value to be stored
+     *
      * @return bool     If the key already exists
+     * 
      * @throws DuplicateKeyException If the key already exists
      */
     public function addValue($key, $value)
@@ -87,8 +100,10 @@ class Basic extends Event
     /**
      * This method returns the value identified by the key
      *
-     * @param $key      Used to identify the value
+     * @param string $key Used to identify the value
+     *
      * @return mixed    The value
+     * 
      * @throws ValueNotFoundException If the value could not be found
      */
     public function getValue($key)

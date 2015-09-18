@@ -23,7 +23,6 @@
  * THE SOFTWARE.
  *
  * Date: 12/08/15
- * Time: 19:29
  *
  * PHP version 5.3+
  *

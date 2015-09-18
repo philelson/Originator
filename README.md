@@ -1,3 +1,23 @@
+# Originator has now been discontinued.
+_This is because the issue is void in Magento 2 as modules can be added via composer and you can get around this issue in Magento 1 with a couple of simple scripts - I assume all your modules are already in seperate repositories!_
+
+1) sync.sh where you add your Magento's install dependant modules via rsync
+
+```bash
+#¡/bin/bash
+# Repeat for all modules
+rsync -vaz /path/to/module/root /path/to/magento/root
+```
+
+2) clean.sh because rsync doesn't handle the deletes (sync, delete a file in the module, sync, file file will not be deleted in Magento). This should be run periodically.
+#¡/bin/bash
+# Remove all the code
+rm -rf /path/to/magento/root
+rsync -vaz /path/to/clean/magento /path/to/magento/root
+chmod -R 777 app/etc media var includes
+./sync.sh
+```
+
 # originator
 This will hopefully be a package to help manage Magento modules across projects
 

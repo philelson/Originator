@@ -20,7 +20,8 @@ chmod -R 777 app/etc media var includes
 ./sync.sh
 ```
 
-<del>
+<!--
+
 # originator
 This will hopefully be a package to help manage Magento modules across projects
 
@@ -76,7 +77,9 @@ application and merged in
 from VC.
 * Don't commit the '.originator_projects', this is a platform specific project location file.
 
-</del>
 
+
+
+-->
 
 

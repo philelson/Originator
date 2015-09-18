@@ -10,6 +10,8 @@ rsync -vaz /path/to/module/root /path/to/magento/root
 ```
 
 2) clean.sh because rsync doesn't handle the deletes (sync, delete a file in the module, sync, file file will not be deleted in Magento). This should be run periodically.
+
+```bash
 #¡/bin/bash
 # Remove all the code
 rm -rf /path/to/magento/root
